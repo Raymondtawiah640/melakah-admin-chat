@@ -2,11 +2,30 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { interval, Subscription } from 'rxjs';
-import { Chart, ChartData, ChartOptions, ArcElement, Tooltip, Legend } from 'chart.js';
+import {
+  Chart,
+  ChartData,
+  ChartOptions,
+  ArcElement,
+  BarElement,
+  BarController,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+} from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
-// ✅ Register only required elements for doughnut chart
-Chart.register(ArcElement, Tooltip, Legend);
+// ✅ Register all necessary Chart.js components for doughnut + bar charts
+Chart.register(
+  ArcElement,
+  BarElement,
+  BarController,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+);
 
 interface Chat {
   id: number;
@@ -20,7 +39,7 @@ interface Chat {
 @Component({
   selector: 'app-incoming-chats',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, BaseChartDirective], // standalone imports
+  imports: [CommonModule, HttpClientModule, BaseChartDirective],
   templateUrl: './incoming-chats.html',
   styleUrls: ['./incoming-chats.css']
 })
@@ -33,17 +52,29 @@ export class IncomingChats implements OnInit, OnDestroy {
   private refreshSub: Subscription | undefined;
 
   // Doughnut chart data
-  public chatChartData: ChartData<'doughnut'> = {
+  public doughnutChartData: ChartData<'doughnut'> = {
     labels: ['Incoming', 'Active', 'Completed'],
     datasets: [
       { data: [0, 0, 0], backgroundColor: ['#FACC15', '#3B82F6', '#22C55E'] }
     ]
   };
 
-  // Doughnut chart options
-  public chatChartOptions: ChartOptions<'doughnut'> = {
+  public doughnutChartOptions: ChartOptions<'doughnut'> = {
     responsive: true,
     plugins: { legend: { position: 'bottom' } }
+  };
+
+  // Example Bar chart data (optional)
+  public barChartData: ChartData<'bar'> = {
+    labels: ['Incoming', 'Active', 'Completed'],
+    datasets: [
+      { label: 'Chats', data: [0, 0, 0], backgroundColor: ['#FACC15', '#3B82F6', '#22C55E'] }
+    ]
+  };
+
+  public barChartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: { legend: { position: 'top' } }
   };
 
   constructor(private http: HttpClient) {}
@@ -78,6 +109,10 @@ export class IncomingChats implements OnInit, OnDestroy {
     const active = this.chats.filter(c => c.status === 'active').length;
     const completed = this.chats.filter(c => c.status === 'completed').length;
 
-    this.chatChartData.datasets[0].data = [incoming, active, completed];
+    // Update doughnut chart
+    this.doughnutChartData.datasets[0].data = [incoming, active, completed];
+
+    // Update bar chart (optional)
+    this.barChartData.datasets[0].data = [incoming, active, completed];
   }
 }
