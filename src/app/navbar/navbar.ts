@@ -1,7 +1,7 @@
-// navbar.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../auth'; // import your auth service
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +12,15 @@ import { RouterModule } from '@angular/router';
 })
 export class Navbar {
   sidebarOpen = false;
+
+  constructor(private auth: AuthService, private router: Router) {}
+
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  logout() {
+    this.auth.logout();          // clear session or admin data
+    this.router.navigate(['/']); // redirect to login
   }
 }

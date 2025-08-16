@@ -1,27 +1,56 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { AuthService } from '../auth';
+
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  admin?: { id: number; username: string };
+}
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
 export class Login {
-  username: string = '';
-  password: string = '';
+  username = '';
+  password = '';
+  errorMessage = '';
 
-  constructor(private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private http: HttpClient) {}
 
   login() {
-    // Replace with real authentication API call
-    if (this.username === 'admin' && this.password === 'password') {
-      this.router.navigate(['/chat-dashboard']);
-    } else {
-      alert('Invalid username or password');
-    }
+  this.errorMessage = '';
+
+  if (!this.username || !this.password) {
+    this.errorMessage = 'Please enter username and password';
+    return;
   }
+
+  this.http.post<LoginResponse>('http://localhost:8000/api/admin-login.php', {
+    username: this.username,
+    password: this.password
+  }).subscribe({
+    next: (res) => {
+      if (res.success && res.admin) {
+        const adminWithRole = { ...res.admin, role: 'admin' }; // add role
+        this.auth.login(adminWithRole); // now type matches
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.errorMessage = res.message;
+      }
+    },
+    error: (err) => {
+      this.errorMessage = 'Server error. Please try again.';
+      console.error('Login error:', err);
+    }
+  });
+}
+
 }
