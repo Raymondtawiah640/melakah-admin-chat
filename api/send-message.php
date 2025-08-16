@@ -1,13 +1,10 @@
 <?php
-// CORS headers
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-
-// JSON response
 header('Content-Type: application/json');
 
-require 'db_connection.php'; // Your DB connection file
+require 'db_connect.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -22,8 +19,8 @@ if (!$sender_id || !$receiver_id || !$message) {
 
 try {
     $stmt = $pdo->prepare("
-        INSERT INTO chat_messages (sender_id, receiver_id, message)
-        VALUES (:sender_id, :receiver_id, :message)
+        INSERT INTO live_chat_messages (sender_id, receiver_id, message, created_at)
+        VALUES (:sender_id, :receiver_id, :message, NOW())
     ");
     $stmt->execute([
         ':sender_id' => $sender_id,
@@ -31,7 +28,15 @@ try {
         ':message' => $message
     ]);
 
-    echo json_encode(["success" => true, "message" => "Message sent"]);
+    // Return inserted message with timestamp
+    $insertedMsg = [
+        'sender_id' => $sender_id,
+        'receiver_id' => $receiver_id,
+        'message' => $message,
+        'created_at' => date('Y-m-d H:i:s')
+    ];
+
+    echo json_encode(["success" => true, "message" => $insertedMsg]);
 } catch (PDOException $e) {
     echo json_encode(["success" => false, "message" => $e->getMessage()]);
 }

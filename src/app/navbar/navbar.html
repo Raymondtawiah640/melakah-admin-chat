@@ -25,6 +25,7 @@
 
     <!-- Navigation Links -->
     <ul class="flex-1 flex flex-col mt-6 space-y-3">
+
       <!-- Incoming Chats -->
       <li class="group relative">
         <a routerLink="/incoming-chats" class="flex items-center h-14 px-5 hover:bg-gray-700 rounded-lg transition-colors duration-200">
@@ -36,7 +37,7 @@
             Incoming Chats
           </span>
           <span class="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-sm px-3 py-1 rounded-full font-semibold">
-            3
+            {{ counts.incoming_chats }}
           </span>
         </a>
       </li>
@@ -51,7 +52,7 @@
             Active Chats
           </span>
           <span class="absolute right-4 top-1/2 -translate-y-1/2 bg-green-500 text-white text-sm px-3 py-1 rounded-full font-semibold">
-            5
+            {{ counts.active_chats }}
           </span>
         </a>
       </li>
@@ -64,6 +65,9 @@
           </svg>
           <span class="absolute left-16 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-lg">
             Completed
+          </span>
+          <span *ngIf="counts.completed_chats > 0" class="absolute right-4 top-1/2 -translate-y-1/2 bg-purple-500 text-white text-sm px-3 py-1 rounded-full font-semibold">
+            {{ counts.completed_chats }}
           </span>
         </a>
       </li>
@@ -93,18 +97,6 @@
         </a>
       </li>
 
-      <!-- Unread Messages -->
-      <li class="group relative">
-        <a href="#" class="flex items-center h-14 px-5 hover:bg-gray-700 rounded-lg transition-colors duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8h18M3 12h12M3 16h8" />
-          </svg>
-          <span class="absolute left-16 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-lg">
-            Unread Messages
-          </span>
-        </a>
-      </li>
-
       <!-- Starred / Favorites -->
       <li class="group relative">
         <a href="#" class="flex items-center h-14 px-5 hover:bg-gray-700 rounded-lg transition-colors duration-200">
@@ -114,23 +106,25 @@
           <span class="absolute left-16 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-lg">
             Starred Chats
           </span>
+          <span *ngIf="counts.starred_chats > 0" class="absolute right-4 top-1/2 -translate-y-1/2 bg-yellow-400 text-white text-sm px-3 py-1 rounded-full font-semibold">
+            {{ counts.starred_chats }}
+          </span>
         </a>
       </li>
     </ul>
 
     <!-- Logout -->
     <div class="mb-6 px-5 mt-auto">
-  <a (click)="logout()" class="flex items-center h-14 px-5 hover:bg-gray-700 rounded-lg transition-colors duration-200 relative group cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5"/>
-    </svg>
-    <span class="absolute left-16 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-red-500 font-semibold text-lg">
-      Logout
-    </span>
-  </a>
-</div>
-
+      <a (click)="logout()" class="flex items-center h-14 px-5 hover:bg-gray-700 rounded-lg transition-colors duration-200 relative group cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5"/>
+                      </svg>
+        <span class="absolute left-16 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-red-500 font-semibold text-lg">
+          Logout
+        </span>
+      </a>
+    </div>
 
   </nav>
 
