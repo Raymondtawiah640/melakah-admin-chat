@@ -4,36 +4,48 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class AuthService {
-  private isLoggedIn = false;
-  private adminUser: { username: string, role: string } | null = null;
+  private loggedIn = false;
+  private adminUser: { id: number, username: string, role: string } | null = null;
 
-  constructor() { }
-
-  login(user: { username: string, role: string }) {
-    this.isLoggedIn = true;
-    this.adminUser = user;
-    localStorage.setItem('admin', JSON.stringify(user)); // optional, persist login
+  constructor() { 
+    this.loadAdminFromStorage(); // auto-load admin on service init
   }
 
+  // Log in admin and persist to localStorage
+  login(user: { id: number, username: string, role: string }) {
+    this.loggedIn = true;
+    this.adminUser = user;
+    localStorage.setItem('admin', JSON.stringify(user));
+  }
+
+  // Log out admin and remove from localStorage
   logout() {
-    this.isLoggedIn = false;
+    this.loggedIn = false;
     this.adminUser = null;
     localStorage.removeItem('admin');
   }
 
-  isAdmin(): boolean {
-    if (this.isLoggedIn) return true;
-    // Check localStorage if needed
+  // Check if admin is logged in
+  isLoggedIn(): boolean {
+    return this.loggedIn || !!localStorage.getItem('admin');
+  }
+
+  // Get the full admin object
+  getAdmin(): { id: number, username: string, role: string } | null {
+    return this.adminUser;
+  }
+
+  // Get numeric admin ID
+  getAdminId(): number | null {
+    return this.adminUser ? this.adminUser.id : null;
+  }
+
+  // Private helper: load admin from localStorage on service init
+  private loadAdminFromStorage() {
     const user = localStorage.getItem('admin');
     if (user) {
       this.adminUser = JSON.parse(user);
-      this.isLoggedIn = true;
-      return true;
+      this.loggedIn = true;
     }
-    return false;
-  }
-
-  getAdmin(): { username: string, role: string } | null {
-    return this.adminUser;
   }
 }

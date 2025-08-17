@@ -47,7 +47,7 @@ export class IncomingChats implements OnInit, OnDestroy {
   chats: Chat[] = [];
   loading = false;
 
-  private apiUrl = 'http://localhost:4300/api/incoming-chats.php';
+  private apiUrl = 'http://localhost:8000/api/incoming-chats.php';
   private adminId = 1;
   private refreshSub: Subscription | undefined;
 

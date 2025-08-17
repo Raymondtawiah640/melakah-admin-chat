@@ -32,7 +32,7 @@ export class ActiveChats implements OnInit, AfterViewChecked {
   senderId = 1;                   // Admin ID
   loading = false;
 
-  private apiUrl = 'http://localhost:4300/api';
+  private apiUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
 
