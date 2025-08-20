@@ -1,11 +1,19 @@
 <?php
 // admin-login.php
+
+// Allow requests from any origin
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 // Include your database connection
-require_once 'db_connect.php';  // make sure this path matches your connection file
+require_once 'db_connect.php';
 
 // Get POST data from Angular
 $data = json_decode(file_get_contents('php://input'), true);
@@ -26,18 +34,16 @@ try {
     $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($admin && password_verify($password, $admin['password'])) {
-        // Login successful
         echo json_encode([
             "success" => true,
             "message" => "Login successful",
             "admin" => [
                 "id" => $admin['id'],
                 "username" => $admin['username'],
-                "role" => "admin"  // Include role for Angular AuthService
+                "role" => "admin"
             ]
         ]);
     } else {
-        // Invalid login
         echo json_encode([
             "success" => false,
             "message" => "Invalid username or password."
@@ -49,4 +55,3 @@ try {
         "message" => "Database error: " . $e->getMessage()
     ]);
 }
-?>
